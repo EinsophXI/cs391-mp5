@@ -13,6 +13,11 @@ function urlValid(url: string): boolean {
   }
 }
 
+function aliasValid(alias: string): boolean {
+  const validChars = /^[a-zA-Z0-9-_]+$/;
+  return validChars.test(alias);
+}
+
 export async function handleServerError(error: any) {
   try {
     console.error("Server error:", error);
@@ -40,6 +45,10 @@ export default async function createNewURL(
 
   if (!urlValid(url)) {
     return { errMsg: "Invalid URL" };
+  }
+
+  if (!aliasValid(alias)) {
+    return { errMsg: "Alias contains invalid characters" };
   }
 
   const l = {
