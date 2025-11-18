@@ -25,14 +25,16 @@ export default function NewLinkForm({
           return;
         }
 
-        try {
-          const newLink = await createNewURL(url, alias);
-          append(newLink);
-          setURL("");
-          setAlias("");
-        } catch (err: any) {
-          onError(err.message || "Error creating link");
+        const result = await createNewURL(url, alias);
+
+        if ("errMsg" in result) {
+          onError(result.errMsg);
+          return;
         }
+
+        append(result);
+        setURL("");
+        setAlias("");
       }}
     >
       <div className="font-bold text-black text-center p-2"> Shorten a URL </div>

@@ -13,14 +13,33 @@ function urlValid(url: string): boolean {
   }
 }
 
+export async function handleServerError(error: any) {
+  try {
+    console.error("Server error:", error);
+
+    if (error instanceof Error) {
+      return { message: error.message };
+    }
+
+    return {
+      message: "Unknown server error",
+      statusCode: 500
+    };
+  } catch (catchErr: any) {
+    return {
+      message: catchErr.message
+    };
+  }
+}
+
 export default async function createNewURL(
   url: string,
   alias: string,
-): Promise<LinkProps> {
+): Promise<LinkProps | { errMsg: string; }> {
   console.log("creating new link")
 
   if (!urlValid(url)) {
-    throw new Error("Invalid URL");
+    return { errMsg: "Invalid URL" };
   }
 
   const l = {
@@ -31,12 +50,12 @@ export default async function createNewURL(
   const linkCollection = await getCollection(LINK_COLLECTION)
   const existing = await linkCollection.findOne({ alias });
   if (existing) {
-    throw new Error("Alias already exists");
+    return { errMsg: "Alias already exists" };
   }
   const res = await linkCollection.insertOne({ ...l });
 
   if (!res.acknowledged) {
-    throw new Error("DB insert failed");
+    return { errMsg: "DB insert failed" };
   }
 
   return { ...l, id: res.insertedId.toHexString() }
