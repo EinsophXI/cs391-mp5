@@ -14,7 +14,7 @@ function urlValid(url: string): boolean {
 }
 
 function aliasValid(alias: string): boolean {
-  const validChars = /^[a-zA-Z0-9-_]+$/;
+  const validChars = /^[A-Za-z0-9$\-_.+!*'()]+$/;
   return validChars.test(alias);
 }
 
